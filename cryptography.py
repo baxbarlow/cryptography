@@ -39,18 +39,20 @@ alphabet = {
 # Returns: string - encrypted text
 def encrypt_caesar(plaintext, offset):
     encrypted_word = ""
+    if (plaintext == None):
+    	return None
     listed = list(plaintext)
     for letter in listed:
         position = alphabet[letter.upper()]
-        sum = position + offset
-        if sum > 26:
-        	sum -= 26
-        encrypted_word += list(alphabet.keys())[list(alphabet.values()).index(sum)]
+        encrypted_word += list(alphabet.keys())[list(alphabet.values()).index((position + offset) % 26)]
     return encrypted_word
 
 # Arguments: string - text to decrypt, integer - offset
 # Returns: string - decrypted text
 def decrypt_caesar(ciphertext, offset):
+	if (ciphertext == None):
+		return None
+	offset %= 26
 	ciphertext.split()
 	plaintext = ""
 	for letter in ciphertext:
@@ -65,6 +67,8 @@ def decrypt_caesar(ciphertext, offset):
 # Arguments: string - text to encrypt, string - keyword used for encyrption
 # Returns: string - encrypted text
 def encrypt_vigenere(plaintext, keyword):
+	if (plaintext == None):
+		return None
 	key = keyword
 	if len(keyword) > len(plaintext):
 		key = keyword[:len(plaintext)]
@@ -76,28 +80,30 @@ def encrypt_vigenere(plaintext, keyword):
 	for i in range(len(plaintext)):
 		sum = alphabet.get(key[i]) + alphabet.get(plaintext[i])
 		if sum > 25:
-			sum -= 26
+			sum %= 26
 		encrypted += list(alphabet.keys())[list(alphabet.values()).index(sum)]
 	return encrypted
 
 # Arguments: string - text to decrypt, string - keyword used for decyrption
 # Returns: string - deciphered text
 def decrypt_vigenere(ciphertext, keyword):
-    text = ciphertext
-    key = keyword
-    if len(keyword) > len(text):
-	    key = keyword[:len(text)]
-    if len(keyword) < len(text):
+	if (ciphertext == None):
+	    return None
+	text = ciphertext
+	key = keyword
+	if len(keyword) > len(text):
+		key = keyword[:len(text)]
+	if len(keyword) < len(text):
 	    while len(key) < len(text):
 		    key += key
 	    key = key[:len(text)]
-    decrypted = ""
-    for i in range(len(text)):
+	decrypted = ""
+	for i in range(len(text)):
 	    sum =  alphabet.get(text[i]) - alphabet.get(key[i])
 	    if sum < 0:
 		    sum += 26
 	    decrypted += list(alphabet.keys())[list(alphabet.values()).index(sum)]
-    return decrypted
+	return decrypted
 
 
 
@@ -129,16 +135,8 @@ def generate_private_key(n=8):
 # Arguments: tuple (tuple, integer, integer) - the private key
 # Returns: tuple - a tuple of integers as a public key
 def create_public_key(private_key):
-    private_key_list = list(private_key)
-    w_list = list(private_key_list[0])
-    q = private_key_list[1]
-    r = private_key_list[2]
-    b_list = []
-    for i in range(8):
-        product = r * w_list[i]
-        b_list.append(product % q)
-    b = tuple(b_list)
-    return b
+    (w_list, q, r) = private_key
+    return tuple([((r * w_list[i]) % q) for i in range(8)])
 
 
 # Arguments: string - the text you want to encrypt, tuple - the key used to encrypt it
@@ -191,6 +189,6 @@ private_key = generate_private_key()
 public_key = create_public_key(private_key)
 
 
-print(decrypt_caesar(encrypt_caesar("CAESAR", 15), 15))
-print(decrypt_vigenere(encrypt_vigenere("VIGENERE", "TEST"), "TEST"))
+print(decrypt_caesar(encrypt_caesar("XYZ", 3), 3))
+print(decrypt_vigenere(encrypt_vigenere("VIGNERE", "TEST"), "TEST"))
 print(decrypt_mhkc(encrypt_mhkc("MHKC", public_key), private_key))
