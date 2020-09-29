@@ -40,8 +40,11 @@ def encrypt_caesar(plaintext, offset):
     if not plaintext:
          return None
     for letter in plaintext:
-        position = alphabet[letter.upper()]
-        encrypted_word += list(alphabet.keys())[list(alphabet.values()).index((position + offset) % 26)]
+        if letter not in alphabet:
+            encrypted_word += letter
+        else:
+            position = alphabet[letter.upper()]
+            encrypted_word += list(alphabet.keys())[list(alphabet.values()).index((position + offset) % 26)]
     return encrypted_word
 
 
@@ -53,10 +56,13 @@ def decrypt_caesar(ciphertext, offset):
      offset %= 26
      plaintext = ""
      for letter in ciphertext:
-          sum = int(alphabet.get(letter)) - offset
-          if sum < 0:
-               sum = 26 + sum
-          plaintext += (list(alphabet.keys())[list(alphabet.values()).index(sum)])
+          if letter not in alphabet:
+              plaintext += letter
+          else:
+              sum = int(alphabet.get(letter)) - offset
+              if sum < 0:
+                  sum = 26 + sum
+              plaintext += (list(alphabet.keys())[list(alphabet.values()).index(sum)])
      return plaintext
 
 
